@@ -58,21 +58,16 @@ namespace KontoNaMonety
 
         public void PokazMonety()
         {
-            decimal suma = 0;
+            Console.WriteLine("Ilość monet każdego nominału");
 
-            foreach (Moneta objektMonety in _przyjmowaneMonety)
-            {
-                for (int i = 0; i < objektMonety.ilosc; i++)
-                {
-                    suma += objektMonety.wartoscMonety;
-                }
-            }
+            decimal suma = 0;
 
             foreach (Moneta objektMonety in _przyjmowaneMonety)
             {
                 if (objektMonety.ilosc > 0)
                 {
                     Console.WriteLine($"Nominał: {objektMonety.wartoscMonety} zł, Ilosc: {objektMonety.ilosc}");
+                    suma += (objektMonety.ilosc * objektMonety.wartoscMonety);
                 }
             }
 

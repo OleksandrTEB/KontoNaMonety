@@ -23,7 +23,7 @@ namespace KontoNaMonety
 
         public string StanKonta()
         {
-            return $"Saldo: {_saldo}, Numer konta: {_numer}";
+            return $"\nSaldo: {_saldo}, Numer konta: {_numer}";
         }
 
         public void Wplac(decimal kwota)
