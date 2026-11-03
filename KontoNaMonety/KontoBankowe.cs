@@ -8,6 +8,8 @@ namespace KontoNaMonety
     {
         private decimal _saldo;
 
+        private List<decimal> _historiaWplat;
+
         private readonly string _numer; // generowany automatycznie przy tworzeniu konta
 
         public decimal Saldo
@@ -19,16 +21,32 @@ namespace KontoNaMonety
         public KontoBankowe()
         {
             _numer = GenerarorRandomowychLiczb(10);
+
+            _historiaWplat = new List<decimal>();
         }
 
         public string StanKonta()
         {
-            return $"\nSaldo: {_saldo}, Numer konta: {_numer}";
+            return $"\nSaldo: {_saldo} zł, Numer konta: {_numer}";
         }
 
         public void Wplac(decimal kwota)
         {
             _saldo += kwota;
+
+            _historiaWplat.Add(kwota);
+        }
+
+        public void PokazHistorieWplat()
+        {
+            Console.WriteLine("\nHistoria wplat:");
+
+            foreach (decimal wplata in _historiaWplat)
+            {
+                Console.WriteLine($"  Kwota: {wplata}");
+            }
+
+            Console.WriteLine($"Łąncznie: {_historiaWplat.Count()} wplat");
         }
 
         public string GenerarorRandomowychLiczb(int dlugosc)

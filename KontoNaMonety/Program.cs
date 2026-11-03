@@ -10,21 +10,18 @@
             // Tworzenie automatu do wpłat
             Automat automat = new Automat();
 
-            automat.WrzucMonete(kontoBankowe, "0,5");
-            automat.WrzucMonete(kontoBankowe, "0,01");
-            automat.WrzucMonete(kontoBankowe, "0,01");
-            automat.WrzucMonete(kontoBankowe, "0,02");
+            automat.WrzucMonety(kontoBankowe, "0,5 0,2 abc 0,3 2");
 
-            automat.WrzucMonete(kontoBankowe, "0,03");
+            automat.WrzucMonete(kontoBankowe, "1");
+            automat.WrzucMonete(kontoBankowe, "1");
+            automat.WrzucMonete(kontoBankowe, "1");
+            automat.WrzucMonete(kontoBankowe, "1");
+            automat.WrzucMonete(kontoBankowe, "1");
+            automat.WrzucMonete(kontoBankowe, "1");
 
-            automat.WrzucMonete(kontoBankowe, "abc");
+            kontoBankowe.PokazHistorieWplat();
 
-            // Wyświetlamy stan konta (jeszcze nie zrobione)
-            Console.WriteLine(kontoBankowe.StanKonta());
             automat.PokazMonety();
-
-            KontoBankowe noweKontoBankowe = new KontoBankowe();
-            Console.WriteLine(noweKontoBankowe.StanKonta());
         }
     }
 }

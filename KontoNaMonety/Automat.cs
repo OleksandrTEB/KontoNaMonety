@@ -14,15 +14,12 @@ namespace KontoNaMonety
         {
             _przyjmowaneMonety = new List<Moneta>();
 
-            _przyjmowaneMonety.Add(new Moneta(0.01m));
-            _przyjmowaneMonety.Add(new Moneta(0.02m));
-            _przyjmowaneMonety.Add(new Moneta(0.05m));
-            _przyjmowaneMonety.Add(new Moneta(0.1m));
-            _przyjmowaneMonety.Add(new Moneta(0.2m));
-            _przyjmowaneMonety.Add(new Moneta(0.5m));
-            _przyjmowaneMonety.Add(new Moneta(1));
-            _przyjmowaneMonety.Add(new Moneta(2));
-            _przyjmowaneMonety.Add(new Moneta(5));
+            _przyjmowaneMonety.Add(new Moneta(5, 5));
+            _przyjmowaneMonety.Add(new Moneta(2, 5));
+            _przyjmowaneMonety.Add(new Moneta(1, 5));
+            _przyjmowaneMonety.Add(new Moneta(0.5m, 5));
+            _przyjmowaneMonety.Add(new Moneta(0.2m, 5));
+            _przyjmowaneMonety.Add(new Moneta(0.1m, 5));
         }
 
         // Stwórz metodę WrzucMonete
@@ -42,32 +39,98 @@ namespace KontoNaMonety
             // Sprawdź czy monety są z zakresu _przyjmowaneMonety
             foreach (Moneta objektMonety in _przyjmowaneMonety)
             {
-                if (objektMonety.wartoscMonety == wartoscMonety)
+                if (objektMonety.WartoscMonety == wartoscMonety)
                 {
-                    konto.Wplac(wartoscMonety);
-                    _iloscMonet++;
-                    objektMonety.ilosc++;
-                    Console.WriteLine($"Przyjęto monetę: {wartoscMonety} zł");
-                    return;
+                    if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
+                    {
+                        Console.WriteLine($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.");
+                        Console.WriteLine($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł");
+                        return;
+                    }
+                    else
+                    {
+                        konto.Wplac(wartoscMonety);
+                        _iloscMonet++;
+                        objektMonety.Ilosc++;
+                        Console.WriteLine($"Przyjęto monetę: {wartoscMonety} zł");
+                        return;
+                    }
                 }
             }
 
 
-            Console.WriteLine("Zła moneta.");
+            Console.WriteLine("Monety o takim nominale nie istnieje!");
+        }
+
+        public void WrzucMonety(KontoBankowe konto, string monety)
+        {
+            monety = monety.Replace(",", ".");
+
+            string[] tablicaMonet = monety.Split(' ');
+
+            int pryjento = 0, zwrucono = 0;
+
+            foreach (string moneta in tablicaMonet)
+            {
+                // Sprawdzamy czy monetę da się W OGÓLE sparsować na jakiś decimal
+                bool czyUdanyParse = decimal.TryParse(moneta, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal wartoscMonety);
+
+                if (!czyUdanyParse)
+                {
+                    Console.WriteLine("Nieudany odczyt monety.");
+                    zwrucono++;
+                }
+                else
+                {
+                    bool nieznaleziono = true;
+
+                    // Sprawdź czy monety są z zakresu _przyjmowaneMonety
+                    foreach (Moneta objektMonety in _przyjmowaneMonety)
+                    {
+                        if (objektMonety.WartoscMonety == wartoscMonety)
+                        {
+                            if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
+                            {
+                                Console.WriteLine($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.");
+                                Console.WriteLine($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł");
+                                nieznaleziono = false;
+                                zwrucono++;
+                            }
+                            else
+                            {
+                                nieznaleziono = false;
+                                konto.Wplac(wartoscMonety);
+                                _iloscMonet++;
+                                pryjento++;
+                                objektMonety.Ilosc++;
+                                Console.WriteLine($"Przyjęto monetę: {wartoscMonety} zł");
+                            }
+                        }
+                    }
+
+                    if (nieznaleziono)
+                    {
+                        Console.WriteLine("Monety o takim nominale nie istnieje!");
+                        zwrucono++;
+                    }   
+                }
+            }
+
+            Console.WriteLine($"Pryzjento: {pryjento}, Zwrucono: {zwrucono}\n");
         }
 
         public void PokazMonety()
         {
-            Console.WriteLine("Ilość monet każdego nominału");
+            Console.WriteLine("\nMonety w automacie:");
 
             decimal suma = 0;
 
             foreach (Moneta objektMonety in _przyjmowaneMonety)
             {
-                if (objektMonety.ilosc > 0)
+                if (objektMonety.Ilosc > 0)
                 {
-                    Console.WriteLine($"Nominał: {objektMonety.wartoscMonety} zł, Ilosc: {objektMonety.ilosc}");
-                    suma += (objektMonety.ilosc * objektMonety.wartoscMonety);
+                    Console.WriteLine($"  Nominał: {objektMonety.WartoscMonety} zł, Ilosc: {objektMonety.Ilosc}");
+                    suma += (objektMonety.Ilosc * objektMonety.WartoscMonety);
                 }
             }
 

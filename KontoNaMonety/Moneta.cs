@@ -2,12 +2,14 @@
 {
     class Moneta
     {
-        public readonly decimal wartoscMonety;
-        public int ilosc;
+        public readonly decimal WartoscMonety;
+        public readonly int MaxIlosc;
+        public int Ilosc;
 
-        public Moneta(decimal wartosc)
+        public Moneta(decimal wartoscMonety, int maxIlosc)
         {
-            wartoscMonety = wartosc;
+            WartoscMonety = wartoscMonety;
+            MaxIlosc = maxIlosc;
         }
     }
 }
