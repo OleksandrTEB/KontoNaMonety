@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace KontoNaMonety
@@ -9,6 +10,7 @@ namespace KontoNaMonety
         private decimal _saldo;
 
         private List<decimal> _historiaWplat;
+        private readonly KoloryKonsoli kolory;
 
         private readonly string _numer; // generowany automatycznie przy tworzeniu konta
 
@@ -23,6 +25,8 @@ namespace KontoNaMonety
             _numer = GenerarorRandomowychLiczb(10);
 
             _historiaWplat = new List<decimal>();
+
+            kolory = new KoloryKonsoli();
         }
 
         public string StanKonta()
@@ -39,14 +43,14 @@ namespace KontoNaMonety
 
         public void PokazHistorieWplat()
         {
-            Console.WriteLine("\nHistoria wplat:");
+            kolory.Konsola("\nHistoria wplat:", ConsoleColor.DarkYellow);
 
             foreach (decimal wplata in _historiaWplat)
             {
-                Console.WriteLine($"  Kwota: {wplata}");
+                kolory.Konsola($"  Kwota: {wplata}", ConsoleColor.Yellow);
             }
 
-            Console.WriteLine($"Łąncznie: {_historiaWplat.Count()} wplat");
+            kolory.Konsola($"Łąncznie: {_historiaWplat.Count()} wplat", ConsoleColor.DarkYellow);
         }
 
         public string GenerarorRandomowychLiczb(int dlugosc)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Text;
 
@@ -9,6 +10,7 @@ namespace KontoNaMonety
     {
         private int _iloscMonet;
         private readonly List<Moneta> _przyjmowaneMonety;
+        private readonly KoloryKonsoli kolory;
 
         public Automat()
         {
@@ -20,6 +22,8 @@ namespace KontoNaMonety
             _przyjmowaneMonety.Add(new Moneta(0.5m, 5));
             _przyjmowaneMonety.Add(new Moneta(0.2m, 5));
             _przyjmowaneMonety.Add(new Moneta(0.1m, 5));
+
+            kolory = new KoloryKonsoli();
         }
 
         // Stwórz metodę WrzucMonete
@@ -32,7 +36,7 @@ namespace KontoNaMonety
 
             if (!czyUdanyParse)
             {
-                Console.WriteLine("Nieudany odczyt monety.");
+                kolory.Konsola("Nieudany odczyt monety.", ConsoleColor.DarkRed);
                 return;
             }
 
@@ -43,8 +47,8 @@ namespace KontoNaMonety
                 {
                     if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
                     {
-                        Console.WriteLine($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.");
-                        Console.WriteLine($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł");
+                        kolory.Konsola($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.", ConsoleColor.Red);
+                        kolory.Konsola($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł", ConsoleColor.Red);
                         return;
                     }
                     else
@@ -52,14 +56,13 @@ namespace KontoNaMonety
                         konto.Wplac(wartoscMonety);
                         _iloscMonet++;
                         objektMonety.Ilosc++;
-                        Console.WriteLine($"Przyjęto monetę: {wartoscMonety} zł");
+                        kolory.Konsola($"Przyjęto monetę: {wartoscMonety} zł", ConsoleColor.Green);
                         return;
                     }
                 }
             }
 
-
-            Console.WriteLine("Monety o takim nominale nie istnieje!");
+            kolory.Konsola("Monety o takim nominale nie istnieje!", ConsoleColor.DarkRed);
         }
 
         public void WrzucMonety(KontoBankowe konto, string monety)
@@ -77,7 +80,7 @@ namespace KontoNaMonety
 
                 if (!czyUdanyParse)
                 {
-                    Console.WriteLine("Nieudany odczyt monety.");
+                    kolory.Konsola("Nieudany odczyt monety.", ConsoleColor.DarkRed);
                     zwrucono++;
                 }
                 else
@@ -91,8 +94,8 @@ namespace KontoNaMonety
                         {
                             if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
                             {
-                                Console.WriteLine($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.");
-                                Console.WriteLine($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł");
+                                kolory.Konsola($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.", ConsoleColor.Red);
+                                kolory.Konsola($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł", ConsoleColor.Red);
                                 nieznaleziono = false;
                                 zwrucono++;
                             }
@@ -103,25 +106,25 @@ namespace KontoNaMonety
                                 _iloscMonet++;
                                 pryjento++;
                                 objektMonety.Ilosc++;
-                                Console.WriteLine($"Przyjęto monetę: {wartoscMonety} zł");
+                                kolory.Konsola($"Przyjęto monetę: {wartoscMonety} zł", ConsoleColor.Green);
                             }
                         }
                     }
 
                     if (nieznaleziono)
                     {
-                        Console.WriteLine("Monety o takim nominale nie istnieje!");
+                        kolory.Konsola("Monety o takim nominale nie istnieje!", ConsoleColor.DarkRed);
                         zwrucono++;
                     }   
                 }
             }
 
-            Console.WriteLine($"Pryzjento: {pryjento}, Zwrucono: {zwrucono}\n");
+            kolory.Konsola($"Pryzjento: {pryjento}, Zwrucono: {zwrucono}\n", ConsoleColor.Magenta);
         }
 
         public void PokazMonety()
         {
-            Console.WriteLine("\nMonety w automacie:");
+            kolory.Konsola("\nMonety w automacie:", ConsoleColor.DarkBlue);
 
             decimal suma = 0;
 
@@ -129,12 +132,12 @@ namespace KontoNaMonety
             {
                 if (objektMonety.Ilosc > 0)
                 {
-                    Console.WriteLine($"  Nominał: {objektMonety.WartoscMonety} zł, Ilosc: {objektMonety.Ilosc}");
+                    kolory.Konsola($"  Nominał: {objektMonety.WartoscMonety} zł, Ilosc: {objektMonety.Ilosc}", ConsoleColor.Blue);
                     suma += (objektMonety.Ilosc * objektMonety.WartoscMonety);
                 }
             }
 
-            Console.WriteLine($"Suma: {suma} zł");
+            kolory.Konsola($"Suma: {suma} zł", ConsoleColor.DarkBlue);
         }
     }
 }
