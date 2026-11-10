@@ -8,20 +8,20 @@ namespace KontoNaMonety
 {
     internal class Automat
     {
-        private int _iloscMonet;
         private readonly List<Moneta> _przyjmowaneMonety;
         private readonly KoloryKonsoli kolory;
+        private readonly int _iloscKazdegoNominalu = 5;
 
         public Automat()
         {
             _przyjmowaneMonety = new List<Moneta>();
 
-            _przyjmowaneMonety.Add(new Moneta(5, 5));
-            _przyjmowaneMonety.Add(new Moneta(2, 5));
-            _przyjmowaneMonety.Add(new Moneta(1, 5));
-            _przyjmowaneMonety.Add(new Moneta(0.5m, 5));
-            _przyjmowaneMonety.Add(new Moneta(0.2m, 5));
-            _przyjmowaneMonety.Add(new Moneta(0.1m, 5));
+            _przyjmowaneMonety.Add(new Moneta(5, _iloscKazdegoNominalu));
+            _przyjmowaneMonety.Add(new Moneta(2, _iloscKazdegoNominalu));
+            _przyjmowaneMonety.Add(new Moneta(1, _iloscKazdegoNominalu));
+            _przyjmowaneMonety.Add(new Moneta(0.5m, _iloscKazdegoNominalu));
+            _przyjmowaneMonety.Add(new Moneta(0.2m, _iloscKazdegoNominalu));
+            _przyjmowaneMonety.Add(new Moneta(0.1m, _iloscKazdegoNominalu));
 
             kolory = new KoloryKonsoli();
         }
@@ -54,7 +54,6 @@ namespace KontoNaMonety
                     else
                     {
                         konto.Wplac(wartoscMonety);
-                        _iloscMonet++;
                         objektMonety.Ilosc++;
                         kolory.Konsola($"Przyjęto monetę: {wartoscMonety} zł", ConsoleColor.Green);
                         return;
@@ -82,40 +81,38 @@ namespace KontoNaMonety
                 {
                     kolory.Konsola("Nieudany odczyt monety.", ConsoleColor.DarkRed);
                     zwrucono++;
+                    continue;
                 }
-                else
-                {
-                    bool nieznaleziono = true;
 
-                    // Sprawdź czy monety są z zakresu _przyjmowaneMonety
-                    foreach (Moneta objektMonety in _przyjmowaneMonety)
+                bool nieznaleziono = true;
+
+                // Sprawdź czy monety są z zakresu _przyjmowaneMonety
+                foreach (Moneta objektMonety in _przyjmowaneMonety)
+                {
+                    if (objektMonety.WartoscMonety == wartoscMonety)
                     {
-                        if (objektMonety.WartoscMonety == wartoscMonety)
+                        if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
                         {
-                            if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
-                            {
-                                kolory.Konsola($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.", ConsoleColor.Red);
-                                kolory.Konsola($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł", ConsoleColor.Red);
-                                nieznaleziono = false;
-                                zwrucono++;
-                            }
-                            else
-                            {
-                                nieznaleziono = false;
-                                konto.Wplac(wartoscMonety);
-                                _iloscMonet++;
-                                pryjento++;
-                                objektMonety.Ilosc++;
-                                kolory.Konsola($"Przyjęto monetę: {wartoscMonety} zł", ConsoleColor.Green);
-                            }
+                            kolory.Konsola($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.", ConsoleColor.Red);
+                            kolory.Konsola($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł", ConsoleColor.Red);
+                            nieznaleziono = false;
+                            zwrucono++;
+                        }
+                        else
+                        {
+                            nieznaleziono = false;
+                            konto.Wplac(wartoscMonety);
+                            pryjento++;
+                            objektMonety.Ilosc++;
+                            kolory.Konsola($"Przyjęto monetę: {wartoscMonety} zł", ConsoleColor.Green);
                         }
                     }
+                }
 
-                    if (nieznaleziono)
-                    {
-                        kolory.Konsola("Monety o takim nominale nie istnieje!", ConsoleColor.DarkRed);
-                        zwrucono++;
-                    }   
+                if (nieznaleziono)
+                {
+                    kolory.Konsola("Monety o takim nominale nie istnieje!", ConsoleColor.DarkRed);
+                    zwrucono++;
                 }
             }
 
