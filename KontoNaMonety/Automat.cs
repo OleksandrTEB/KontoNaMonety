@@ -29,94 +29,81 @@ namespace KontoNaMonety
         // Stwórz metodę WrzucMonete
         public void WrzucMonete(KontoBankowe konto, string moneta)
         {
-            moneta = moneta.Replace(",", ".");
-
-            // Sprawdzamy czy monetę da się W OGÓLE sparsować na jakiś decimal
-            bool czyUdanyParse = decimal.TryParse(moneta, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal wartoscMonety);
-
-            if (!czyUdanyParse)
+            if (!ParsowanieMonety(moneta, out decimal wartoscMonety))
             {
-                kolory.Konsola("Nieudany odczyt monety.", ConsoleColor.DarkRed);
                 return;
             }
 
-            // Sprawdź czy monety są z zakresu _przyjmowaneMonety
-            foreach (Moneta objektMonety in _przyjmowaneMonety)
+            if (CzyJestTakaMoneta(wartoscMonety))
             {
-                if (objektMonety.WartoscMonety == wartoscMonety)
-                {
-                    if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
-                    {
-                        kolory.Konsola($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.", ConsoleColor.Red);
-                        kolory.Konsola($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł", ConsoleColor.Red);
-                        return;
-                    }
-                    else
-                    {
-                        konto.Wplac(wartoscMonety);
-                        objektMonety.Ilosc++;
-                        kolory.Konsola($"Przyjęto monetę: {wartoscMonety} zł", ConsoleColor.Green);
-                        return;
-                    }
-                }
-            }
-
-            kolory.Konsola("Monety o takim nominale nie istnieje!", ConsoleColor.DarkRed);
+                konto.Wplac(wartoscMonety);
+            }            
         }
 
         public void WrzucMonety(KontoBankowe konto, string monety)
         {
-            monety = monety.Replace(",", ".");
-
             string[] tablicaMonet = monety.Split(' ');
 
             int pryjento = 0, zwrucono = 0;
 
             foreach (string moneta in tablicaMonet)
             {
-                // Sprawdzamy czy monetę da się W OGÓLE sparsować na jakiś decimal
-                bool czyUdanyParse = decimal.TryParse(moneta, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal wartoscMonety);
-
-                if (!czyUdanyParse)
+                if (!ParsowanieMonety(moneta, out decimal wartoscMonety))
                 {
-                    kolory.Konsola("Nieudany odczyt monety.", ConsoleColor.DarkRed);
                     zwrucono++;
                     continue;
                 }
 
-                bool nieznaleziono = true;
-
-                // Sprawdź czy monety są z zakresu _przyjmowaneMonety
-                foreach (Moneta objektMonety in _przyjmowaneMonety)
+                if (CzyJestTakaMoneta(wartoscMonety))
                 {
-                    if (objektMonety.WartoscMonety == wartoscMonety)
-                    {
-                        if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
-                        {
-                            kolory.Konsola($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.", ConsoleColor.Red);
-                            kolory.Konsola($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł", ConsoleColor.Red);
-                            nieznaleziono = false;
-                            zwrucono++;
-                        }
-                        else
-                        {
-                            nieznaleziono = false;
-                            konto.Wplac(wartoscMonety);
-                            pryjento++;
-                            objektMonety.Ilosc++;
-                            kolory.Konsola($"Przyjęto monetę: {wartoscMonety} zł", ConsoleColor.Green);
-                        }
-                    }
+                    konto.Wplac(wartoscMonety);
+                    pryjento++;
                 }
-
-                if (nieznaleziono)
+                else
                 {
-                    kolory.Konsola("Monety o takim nominale nie istnieje!", ConsoleColor.DarkRed);
                     zwrucono++;
                 }
             }
 
             kolory.Konsola($"Pryzjento: {pryjento}, Zwrucono: {zwrucono}\n", ConsoleColor.Magenta);
+        }
+
+        public bool CzyJestTakaMoneta(decimal moneta)
+        {
+            foreach (Moneta objektMonety in _przyjmowaneMonety)
+            {
+                if (objektMonety.WartoscMonety == moneta)
+                {
+                    if ((objektMonety.Ilosc + 1) > objektMonety.MaxIlosc)
+                    {
+                        kolory.Konsola($"Moneta o nominale: {objektMonety.WartoscMonety} zł nie zmiania stanu konta.", ConsoleColor.Red);
+                        kolory.Konsola($"Zwrucono monete o nominale: {objektMonety.WartoscMonety} zł", ConsoleColor.Red);
+                        return false;
+                    }
+                    else
+                    {
+                        objektMonety.Ilosc++;
+                        kolory.Konsola($"Przyjęto monetę: {moneta} zł", ConsoleColor.Green);
+                        return true;
+                    }
+                }
+            }
+
+            kolory.Konsola("Monety o takim nominale nie istnieje!", ConsoleColor.DarkRed);
+            return false;
+        }
+
+        public bool ParsowanieMonety(string moneta, out decimal wartoscMonety)
+        {
+            moneta = moneta.Replace(",", ".");
+
+            if (decimal.TryParse(moneta, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out wartoscMonety))
+            {
+                return true;
+            }
+
+            kolory.Konsola("Nieudany odczyt monety.", ConsoleColor.DarkRed);
+            return false;
         }
 
         public void PokazMonety()
@@ -134,6 +121,7 @@ namespace KontoNaMonety
                 }
             }
 
+            kolory.Konsola($"Ilosc: {Moneta.IloscMonetWAutomacie(_przyjmowaneMonety)}", ConsoleColor.DarkBlue);
             kolory.Konsola($"Suma: {suma} zł", ConsoleColor.DarkBlue);
         }
     }

@@ -11,5 +11,10 @@
             WartoscMonety = wartoscMonety;
             MaxIlosc = maxIlosc;
         }
+
+        public static int IloscMonetWAutomacie(List<Moneta> monety)
+        {
+            return monety.Sum(moneta => moneta.Ilosc);
+        }
     }
 }
