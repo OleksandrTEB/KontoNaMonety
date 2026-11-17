@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.Text;
+﻿using System.Globalization;
 
 namespace KontoNaMonety
 {
@@ -37,7 +33,7 @@ namespace KontoNaMonety
             if (CzyJestTakaMoneta(wartoscMonety))
             {
                 konto.Wplac(wartoscMonety);
-            }            
+            }
         }
 
         public void WrzucMonety(KontoBankowe konto, string monety)

@@ -26,6 +26,15 @@
             kontoBankowe.PokazHistorieWplat();
 
             automat.PokazMonety();
+
+            Bankomat bankomat = new Bankomat();
+
+            bankomat.ZaladujMonety(10, 5);
+            bankomat.ZaladujMonety(10, 2);
+            bankomat.ZaladujMonety(10, 1);
+            bankomat.ZaladujMonety(10, 0.5m);
+            bankomat.ZaladujMonety(10, 0.2m);
+            bankomat.ZaladujMonety(10, 0.1m);
         }
     }
 }

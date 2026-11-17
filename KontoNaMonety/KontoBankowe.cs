@@ -41,6 +41,18 @@ namespace KontoNaMonety
             _historiaWplat.Add(kwota);
         }
 
+        public void Wyplac(decimal kwota)
+        {
+            if ((_saldo - kwota) > 0)
+            {
+                _saldo -= kwota;
+            }
+            else
+            {
+                kolory.Konsola("Nieudana wypłata, niewystarcza środków!", ConsoleColor.DarkRed);
+            }
+        }
+
         public void PokazHistorieWplat()
         {
             kolory.Konsola("\nHistoria wplat:", ConsoleColor.DarkYellow);
