@@ -4,44 +4,93 @@ namespace KontoNaMonety
 {
     internal class Bankomat
     {
-        private List<Moneta> _pojemnikNaMonety;
-        private Automat _automat;
-        private readonly KoloryKonsoli kolory;
-        private int _iloscKazdegoNominalu;
+        private List<Moneta> _pojemnik;
+        private PojemnikNaMonety _tworzeniePojemnika;
+        private KoloryKonsoli kolory;
 
         public Bankomat()
         {
+            _tworzeniePojemnika = new PojemnikNaMonety();
+
+            _pojemnik = _tworzeniePojemnika.NowyPojemnik(100);
+
             kolory = new KoloryKonsoli();
-            _pojemnikNaMonety = new List<Moneta>();
-            _automat = new Automat();
-
-            _iloscKazdegoNominalu = 10;
-
-            _pojemnikNaMonety.Add(new Moneta(5, _iloscKazdegoNominalu));
-            _pojemnikNaMonety.Add(new Moneta(2, _iloscKazdegoNominalu));
-            _pojemnikNaMonety.Add(new Moneta(1, _iloscKazdegoNominalu));
-            _pojemnikNaMonety.Add(new Moneta(0.5m, _iloscKazdegoNominalu));
-            _pojemnikNaMonety.Add(new Moneta(0.2m, _iloscKazdegoNominalu));
-            _pojemnikNaMonety.Add(new Moneta(0.1m, _iloscKazdegoNominalu));
         }
 
         public void ZaladujMonety(int ilosc, decimal nominal)
         {
-            foreach (Moneta objektMonety in _pojemnikNaMonety)
+            foreach (Moneta objektMonety in _pojemnik)
             {
                 if (objektMonety.WartoscMonety == nominal)
                 {
-                    objektMonety.Ilosc += ilosc;
-                    return;
+                    if ((objektMonety.Ilosc + ilosc) <= objektMonety.MaxIlosc)
+                    {
+                        objektMonety.Ilosc += ilosc;
+                        return;
+                    }
+                    else
+                    {
+                        kolory.Konsola("Za dużo monet!", ConsoleColor.DarkRed);
+                        return;
+                    }
                 }
             }
-
-            kolory.Konsola("Monety o takim nominale nie istnieje!", ConsoleColor.DarkRed);
         }
 
         public void Wyplac(KontoBankowe konto, decimal kwota)
         {
+            if (konto.Wyplac(kwota))
+            {
+                if (CzyDaSieWyplacic(kwota))
+                {
+                    decimal pierwszaKwota = kwota;
 
+                    foreach (Moneta moneta in _pojemnik)
+                    {
+                        if (kwota >= moneta.WartoscMonety)
+                        {
+                            kolory.Konsola($"{moneta.WartoscMonety}", ConsoleColor.Green);
+                            kwota -= moneta.WartoscMonety;
+                            moneta.Ilosc--;
+                        }
+                    }
+
+                    kolory.Konsola($"Wyplacono: {pierwszaKwota} zl", ConsoleColor.Green);
+                }
+            }
+            else
+            {
+                kolory.Konsola("Nieudana wypłata, niewystarcza środków na koncie!", ConsoleColor.DarkRed);
+            }
+        }
+
+        public bool CzyDaSieWyplacic(decimal kwota)
+        {
+            List<Moneta> _pojemnikDoLiczenia = new List<Moneta>();
+
+            foreach(Moneta moneta in _pojemnik)
+            {
+                _pojemnikDoLiczenia.Add(moneta);
+            }
+
+            foreach(Moneta moneta in _pojemnikDoLiczenia)
+            {
+                if (kwota >= moneta.WartoscMonety)
+                {
+                    if (moneta.Ilosc > 0)
+                    {
+                        kwota -= moneta.WartoscMonety;
+                        moneta.Ilosc--;
+                    }
+                    else
+                    {
+                        kolory.Konsola("Niewystarcza srodkuw w bankomacie!", ConsoleColor.DarkRed);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

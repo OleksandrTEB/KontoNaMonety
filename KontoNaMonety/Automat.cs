@@ -4,20 +4,15 @@ namespace KontoNaMonety
 {
     internal class Automat
     {
-        private readonly List<Moneta> _przyjmowaneMonety;
-        private readonly KoloryKonsoli kolory;
-        private readonly int _iloscKazdegoNominalu = 5;
+        private List<Moneta> _pojemnik;
+        private PojemnikNaMonety _tworzeniePojemnika;
+        private KoloryKonsoli kolory;
 
         public Automat()
         {
-            _przyjmowaneMonety = new List<Moneta>();
+            _tworzeniePojemnika = new PojemnikNaMonety();
 
-            _przyjmowaneMonety.Add(new Moneta(5, _iloscKazdegoNominalu));
-            _przyjmowaneMonety.Add(new Moneta(2, _iloscKazdegoNominalu));
-            _przyjmowaneMonety.Add(new Moneta(1, _iloscKazdegoNominalu));
-            _przyjmowaneMonety.Add(new Moneta(0.5m, _iloscKazdegoNominalu));
-            _przyjmowaneMonety.Add(new Moneta(0.2m, _iloscKazdegoNominalu));
-            _przyjmowaneMonety.Add(new Moneta(0.1m, _iloscKazdegoNominalu));
+            _pojemnik = _tworzeniePojemnika.NowyPojemnik(5);
 
             kolory = new KoloryKonsoli();
         }
@@ -66,7 +61,7 @@ namespace KontoNaMonety
 
         public bool CzyJestTakaMoneta(decimal moneta)
         {
-            foreach (Moneta objektMonety in _przyjmowaneMonety)
+            foreach (Moneta objektMonety in _pojemnik)
             {
                 if (objektMonety.WartoscMonety == moneta)
                 {
@@ -108,7 +103,7 @@ namespace KontoNaMonety
 
             decimal suma = 0;
 
-            foreach (Moneta objektMonety in _przyjmowaneMonety)
+            foreach (Moneta objektMonety in _pojemnik)
             {
                 if (objektMonety.Ilosc > 0)
                 {
@@ -117,7 +112,7 @@ namespace KontoNaMonety
                 }
             }
 
-            kolory.Konsola($"Ilosc: {Moneta.IloscMonetWAutomacie(_przyjmowaneMonety)}", ConsoleColor.DarkBlue);
+            kolory.Konsola($"Ilosc: {Moneta.IloscMonetWAutomacie(_pojemnik)}", ConsoleColor.DarkBlue);
             kolory.Konsola($"Suma: {suma} zł", ConsoleColor.DarkBlue);
         }
     }

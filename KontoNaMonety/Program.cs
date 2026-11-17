@@ -35,6 +35,8 @@
             bankomat.ZaladujMonety(10, 0.5m);
             bankomat.ZaladujMonety(10, 0.2m);
             bankomat.ZaladujMonety(10, 0.1m);
+
+            bankomat.Wyplac(kontoBankowe, 7.4m);
         }
     }
 }
