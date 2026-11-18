@@ -45,9 +45,11 @@ namespace KontoNaMonety
                 {
                     decimal pierwszaKwota = kwota;
 
+                    
+
                     foreach (Moneta moneta in _pojemnik)
                     {
-                        if (kwota >= moneta.WartoscMonety)
+                        while (kwota >= moneta.WartoscMonety)
                         {
                             kolory.Konsola($"{moneta.WartoscMonety}", ConsoleColor.Green);
                             kwota -= moneta.WartoscMonety;
@@ -66,16 +68,16 @@ namespace KontoNaMonety
 
         public bool CzyDaSieWyplacic(decimal kwota)
         {
-            List<Moneta> _pojemnikDoLiczenia = new List<Moneta>();
+            List<Moneta> pojemnikDoLiczenia = new List<Moneta>();
 
-            foreach(Moneta moneta in _pojemnik)
+            foreach(Moneta m in _pojemnik)
             {
-                _pojemnikDoLiczenia.Add(moneta);
+                pojemnikDoLiczenia.Add(new Moneta(m));
             }
 
-            foreach(Moneta moneta in _pojemnikDoLiczenia)
+            foreach(Moneta moneta in pojemnikDoLiczenia)
             {
-                if (kwota >= moneta.WartoscMonety)
+                while (kwota >= moneta.WartoscMonety)
                 {
                     if (moneta.Ilosc > 0)
                     {
@@ -91,6 +93,25 @@ namespace KontoNaMonety
             }
 
             return true;
+        }
+
+        public void PokazMonety()
+        {
+            kolory.Konsola("\nMonety w bankomacie:", ConsoleColor.DarkBlue);
+
+            decimal suma = 0;
+
+            foreach (Moneta objektMonety in _pojemnik)
+            {
+                if (objektMonety.Ilosc > 0)
+                {
+                    kolory.Konsola($"  Nominał: {objektMonety.WartoscMonety} zł, Ilosc: {objektMonety.Ilosc}", ConsoleColor.Blue);
+                    suma += (objektMonety.Ilosc * objektMonety.WartoscMonety);
+                }
+            }
+
+            kolory.Konsola($"Ilosc: {Moneta.IloscMonetWAutomacie(_pojemnik)}", ConsoleColor.DarkBlue);
+            kolory.Konsola($"Suma: {suma} zł", ConsoleColor.DarkBlue);
         }
     }
 }

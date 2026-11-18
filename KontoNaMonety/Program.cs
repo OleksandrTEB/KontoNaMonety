@@ -12,20 +12,7 @@
 
             KoloryKonsoli kolory = new KoloryKonsoli();
 
-            automat.WrzucMonety(kontoBankowe, "0,5 0,2 abc 0,3 2");
-
-            automat.WrzucMonete(kontoBankowe, "1");
-            automat.WrzucMonete(kontoBankowe, "1");
-            automat.WrzucMonete(kontoBankowe, "1");
-            automat.WrzucMonete(kontoBankowe, "1");
-            automat.WrzucMonete(kontoBankowe, "1");
-            automat.WrzucMonete(kontoBankowe, "1");
-
             kolory.Konsola(kontoBankowe.StanKonta(), ConsoleColor.DarkGreen);
-
-            kontoBankowe.PokazHistorieWplat();
-
-            automat.PokazMonety();
 
             Bankomat bankomat = new Bankomat();
 
@@ -36,7 +23,8 @@
             bankomat.ZaladujMonety(10, 0.2m);
             bankomat.ZaladujMonety(10, 0.1m);
 
-            bankomat.Wyplac(kontoBankowe, 7.4m);
+            bankomat.Wyplac(kontoBankowe, 7.7m);
+            bankomat.PokazMonety();
         }
     }
 }
