@@ -5,16 +5,22 @@ namespace KontoNaMonety
     internal class Bankomat
     {
         private List<Moneta> _pojemnik;
+        private List<Moneta> _wydaneMonety;
         private PojemnikNaMonety _tworzeniePojemnika;
-        private KoloryKonsoli kolory;
+        private KoloryKonsoli _kolory;
+        private int _iloscKazdegoNominaluWPojemniku;
 
         public Bankomat()
         {
+            _iloscKazdegoNominaluWPojemniku = 100;
+
             _tworzeniePojemnika = new PojemnikNaMonety();
 
-            _pojemnik = _tworzeniePojemnika.NowyPojemnik(100);
+            _wydaneMonety = _tworzeniePojemnika.NowyPojemnik(_iloscKazdegoNominaluWPojemniku);
 
-            kolory = new KoloryKonsoli();
+            _pojemnik = _tworzeniePojemnika.NowyPojemnik(_iloscKazdegoNominaluWPojemniku);
+
+            _kolory = new KoloryKonsoli();
         }
 
         public void ZaladujMonety(int ilosc, decimal nominal)
@@ -30,7 +36,7 @@ namespace KontoNaMonety
                     }
                     else
                     {
-                        kolory.Konsola("Za dużo monet!", ConsoleColor.DarkRed);
+                        _kolory.Konsola("Za dużo monet!", ConsoleColor.DarkRed);
                         return;
                     }
                 }
@@ -45,24 +51,24 @@ namespace KontoNaMonety
                 {
                     decimal pierwszaKwota = kwota;
 
-                    
-
                     foreach (Moneta moneta in _pojemnik)
                     {
-                        while (kwota >= moneta.WartoscMonety)
+                        while (kwota >= moneta.WartoscMonety && moneta.Ilosc > 0)
                         {
-                            kolory.Konsola($"{moneta.WartoscMonety}", ConsoleColor.Green);
                             kwota -= moneta.WartoscMonety;
                             moneta.Ilosc--;
+
+                            Moneta znalezionaMoneta = _wydaneMonety.Find(m => m.WartoscMonety == moneta.WartoscMonety);
+                            znalezionaMoneta.Ilosc++;
                         }
                     }
 
-                    kolory.Konsola($"Wyplacono: {pierwszaKwota} zl", ConsoleColor.Green);
+                    _kolory.Konsola($"Wyplacono: {pierwszaKwota} zl", ConsoleColor.Green);
                 }
             }
             else
             {
-                kolory.Konsola("Nieudana wypłata, niewystarcza środków na koncie!", ConsoleColor.DarkRed);
+                _kolory.Konsola("Nieudana wypłata, niewystarcza środków na koncie!", ConsoleColor.DarkRed);
             }
         }
 
@@ -77,41 +83,44 @@ namespace KontoNaMonety
 
             foreach(Moneta moneta in pojemnikDoLiczenia)
             {
-                while (kwota >= moneta.WartoscMonety)
+                if (moneta.Ilosc > 0)
                 {
-                    if (moneta.Ilosc > 0)
+                    while (kwota >= moneta.WartoscMonety && moneta.Ilosc > 0)
                     {
                         kwota -= moneta.WartoscMonety;
                         moneta.Ilosc--;
                     }
-                    else
-                    {
-                        kolory.Konsola("Niewystarcza srodkuw w bankomacie!", ConsoleColor.DarkRed);
-                        return false;
-                    }
                 }
+            }
+
+            if (kwota > 0)
+            {
+                _kolory.Konsola("Niewystarcza srodkuw w bankomacie!", ConsoleColor.DarkRed);
+                return false;
             }
 
             return true;
         }
 
-        public void PokazMonety()
+        public void WydawaneMonety()
         {
-            kolory.Konsola("\nMonety w bankomacie:", ConsoleColor.DarkBlue);
+            _kolory.Konsola("\nMonety w wydane:", ConsoleColor.DarkBlue);
 
-            decimal suma = 0;
 
-            foreach (Moneta objektMonety in _pojemnik)
+            foreach (Moneta objektMonety in _wydaneMonety)
             {
                 if (objektMonety.Ilosc > 0)
                 {
-                    kolory.Konsola($"  Nominał: {objektMonety.WartoscMonety} zł, Ilosc: {objektMonety.Ilosc}", ConsoleColor.Blue);
-                    suma += (objektMonety.Ilosc * objektMonety.WartoscMonety);
+                    _kolory.Konsola($"  Nominał: {objektMonety.WartoscMonety} zł, Ilosc: {objektMonety.Ilosc}", ConsoleColor.Blue);
                 }
             }
+        }
 
-            kolory.Konsola($"Ilosc: {Moneta.IloscMonetWAutomacie(_pojemnik)}", ConsoleColor.DarkBlue);
-            kolory.Konsola($"Suma: {suma} zł", ConsoleColor.DarkBlue);
+        public void PokazMonety()
+        {
+            _kolory.Konsola("\nMonety w bankomacie:", ConsoleColor.DarkBlue);
+
+            Moneta.PokazMonetyWpojemniku(_pojemnik);
         }
     }
 }

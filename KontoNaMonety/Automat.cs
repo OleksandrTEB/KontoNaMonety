@@ -12,7 +12,7 @@ namespace KontoNaMonety
         {
             _tworzeniePojemnika = new PojemnikNaMonety();
 
-            _pojemnik = _tworzeniePojemnika.NowyPojemnik(5);
+            _pojemnik = _tworzeniePojemnika.NowyPojemnik(50);
 
             kolory = new KoloryKonsoli();
         }
@@ -101,19 +101,7 @@ namespace KontoNaMonety
         {
             kolory.Konsola("\nMonety w automacie:", ConsoleColor.DarkBlue);
 
-            decimal suma = 0;
-
-            foreach (Moneta objektMonety in _pojemnik)
-            {
-                if (objektMonety.Ilosc > 0)
-                {
-                    kolory.Konsola($"  Nominał: {objektMonety.WartoscMonety} zł, Ilosc: {objektMonety.Ilosc}", ConsoleColor.Blue);
-                    suma += (objektMonety.Ilosc * objektMonety.WartoscMonety);
-                }
-            }
-
-            kolory.Konsola($"Ilosc: {Moneta.IloscMonetWAutomacie(_pojemnik)}", ConsoleColor.DarkBlue);
-            kolory.Konsola($"Suma: {suma} zł", ConsoleColor.DarkBlue);
+            Moneta.PokazMonetyWpojemniku(_pojemnik);
         }
     }
 }

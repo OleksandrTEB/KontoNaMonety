@@ -29,9 +29,9 @@ namespace KontoNaMonety
             kolory = new KoloryKonsoli();
         }
 
-        public string StanKonta()
+        public void StanKonta()
         {
-            return $"\nSaldo: {_saldo} zł, Numer konta: {_numer}";
+            kolory.Konsola($"\nSaldo: {_saldo} zł, Numer konta: {_numer}", ConsoleColor.DarkGreen);
         }
 
         public void Wplac(decimal kwota)
